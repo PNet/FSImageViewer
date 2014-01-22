@@ -33,35 +33,19 @@
 - (id)initWithFrame:(CGRect)frame {
     if ((self = [super initWithFrame:frame])) {
 
-        self.backgroundColor = [UIColor colorWithWhite:0.0f alpha:0.3f];
+        self.backgroundColor = [UIColor clearColor];
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
 
-        textLabel = [[UILabel alloc] initWithFrame:CGRectMake(20.0f, 0.0f, self.frame.size.width - 40.0f, 40.0f)];
+        textLabel = [[UILabel alloc] initWithFrame:CGRectMake(20.0f, 0.0f, self.frame.size.width - 40.0f, 25.0f)];
         textLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         textLabel.backgroundColor = [UIColor clearColor];
         textLabel.textAlignment = NSTextAlignmentCenter;
         textLabel.textColor = [UIColor whiteColor];
-        textLabel.shadowColor = [UIColor blackColor];
-        textLabel.shadowOffset = CGSizeMake(0.0f, 1.0f);
+        textLabel.font = [UIFont fontWithName:@"Helvetica" size:13.0];
         [self addSubview:textLabel];
     }
     return self;
 }
-
-- (void)layoutSubviews {
-    textLabel.frame = CGRectMake(20.0f, 0.0f, self.frame.size.width - 40.0f, 40.0f);
-    [self setNeedsDisplay];
-}
-
-- (void)drawRect:(CGRect)rect {
-    CGContextRef ctx = UIGraphicsGetCurrentContext();
-    [[UIColor colorWithWhite:1.0f alpha:0.8f] setStroke];
-    CGContextMoveToPoint(ctx, 0.0f, 0.0f);
-    CGContextAddLineToPoint(ctx, self.frame.size.width, 0.0f);
-    CGContextStrokePath(ctx);
-}
-
-
 
 - (void)setText:(NSString *)text {
     _text = text;
@@ -73,11 +57,6 @@
         textLabel.text = _text;
         self.hidden = NO;
     }
-}
-
-- (void) setAdjustsFontSizeToFitWidth:(BOOL)adjustsFontSizeToFitWidth {
-    textLabel.adjustsFontSizeToFitWidth = adjustsFontSizeToFitWidth;
-    _adjustsFontSizeToFitWidth = adjustsFontSizeToFitWidth;
 }
 
 - (void)hideView:(BOOL)value {

@@ -37,6 +37,7 @@
     BOOL barsHidden;
     BOOL statusBarHidden;
     UIBarButtonItem *shareButton;
+    UIPageControl *pageControl;
 }
 
 - (id)initWithImageSource:(id <FSImageSource>)aImageSource {
@@ -82,7 +83,7 @@
 	}
 #endif
 
-    self.view.backgroundColor = [UIColor whiteColor];
+    self.view.backgroundColor = [UIColor blackColor];
 
     if (!_scrollView) {
         self.scrollView = [[UIScrollView alloc] initWithFrame:self.view.bounds];
@@ -105,7 +106,6 @@
 
     if (!_titleView) {
         self.titleView = [[FSImageTitleView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 1)];
-        _titleView.adjustsFontSizeToFitWidth = [self isAdjustsFontSizeToFitWidth];
         [self.view addSubview:_titleView];
     }
 
@@ -115,6 +115,17 @@
         [views addObject:[NSNull null]];
     }
     self.imageViews = views;
+    
+    pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 30, 20)];
+    pageControl.center = self.view.center;
+    CGRect frame = pageControl.frame;
+    frame.origin.y = self.view.frame.size.height - 60;
+    pageControl.frame = frame;
+    pageControl.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    pageControl.numberOfPages = views.count;
+    pageControl.currentPage = 0;
+    
+    [self.view addSubview:pageControl];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -240,7 +251,7 @@
     [self.navigationController setNavigationBarHidden:hidden animated:animated];
 
     [UIView animateWithDuration:0.3 animations:^{
-        UIColor *backgroundColor = hidden ? [UIColor blackColor] : [UIColor whiteColor];
+        UIColor *backgroundColor = hidden ? [UIColor blackColor] : [UIColor blackColor];
         self.view.backgroundColor = backgroundColor;
         self.scrollView.backgroundColor = backgroundColor;
         for (FSImageView *imageView in _imageViews) {
@@ -292,13 +303,6 @@
 }
 
 - (void)setViewState {
-
-    NSInteger numberOfImages = [_imageSource numberOfImages];
-    if (numberOfImages > 1) {
-        self.navigationItem.title = [NSString stringWithFormat:@"%i %@ %i", pageIndex + 1, [self localizedStringForKey:@"imageCounter" withDefault:@"of"], numberOfImages];
-    } else {
-        self.title = @"";
-    }
 
     if (_titleView) {
         _titleView.text = _imageSource[pageIndex].title;
@@ -383,7 +387,7 @@
     }
 
     if (![_titleView isHidden]) {
-        _titleView.frame = CGRectMake(0.0f, self.view.bounds.size.height - 40.0f, self.view.bounds.size.width, 40.0f);
+        _titleView.frame = CGRectMake(0.0f, self.view.bounds.size.height - 25.0f, self.view.bounds.size.width, 25.0f);
     }
 }
 
@@ -438,7 +442,7 @@
 
     if (imageView == nil || (NSNull *) imageView == [NSNull null]) {
         imageView = [[FSImageView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, _scrollView.bounds.size.width, _scrollView.bounds.size.height)];
-        UIColor *backgroundColor = barsHidden ? [UIColor blackColor] : [UIColor whiteColor];
+        UIColor *backgroundColor = barsHidden ? [UIColor blackColor] : [UIColor blackColor];
         [imageView changeBackgroundColor:backgroundColor];
         [_imageViews replaceObjectAtIndex:(NSUInteger) page withObject:imageView];
     }
@@ -479,6 +483,10 @@
             [self layoutScrollViewSubviews];
         }
     }
+    
+    CGFloat pageWidth = scrollView.frame.size.width;
+    int page = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
+    pageControl.currentPage = page;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
