@@ -42,7 +42,7 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self.timeoutInterval = 30.0;
+        self.timeoutInterval = 180.0;
         runningRequests = [[NSMutableArray alloc] init];
     }
 
